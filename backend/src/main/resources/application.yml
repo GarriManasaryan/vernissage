@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: vernissage
+
+  datasource:
+#    url: jdbc:postgresql://db_vernissage_host:5433/db_vernissage
+    url: jdbc:postgresql://localhost:5433/db_vernissage
+    username: postgres
+    password: 1
+
+    flyway:
+      baselineOnMigrate: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+#  spring.servlet.multipart.max-file-size=10MB
+#  spring.servlet.multipart.max-request-size=10MB
+

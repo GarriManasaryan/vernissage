@@ -1,0 +1,9 @@
+FROM bellsoft/liberica-openjdk-debian:21.0.1
+
+# скопировать все файлы из локальной машины в app
+COPY backend/build/output-docker/vernissage.jar /app/
+
+# задать рабоч директорию
+WORKDIR /app
+
+ENTRYPOINT ["java", "--enable-preview", "-jar" ,"vernissage.jar"]

@@ -1,0 +1,39 @@
+version: "3"
+services:
+  database:
+    image: postgres:14.5
+    container_name: db_vernissage
+    hostname: db_vernissage_host
+    networks:
+      - my-net
+    environment:
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_USER=postgres
+    volumes:
+      - pg_clinical_trials:/var/lib/postgresql/data
+    expose:
+      - "5433"
+    ports:
+      - "5433:5433"
+    command: -p 5433
+
+#  backend:
+#    #    image: garrri/testing_system_backend:latest
+#    depends_on:
+#      - database
+#    hostname: backend1
+#    build:
+#      dockerfile: Dockerfile.bk
+#    environment:
+#      - SPRING_RABBITMQ_HOST=my-rabbit
+#    networks:
+#      - my-net
+#    ports:
+#      - "8081:8080"
+
+volumes:
+  pg_clinical_trials:
+
+networks:
+  my-net:
+    driver: bridge
