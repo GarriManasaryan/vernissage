@@ -6,12 +6,14 @@ import com.handicraft.vernissage.port.adapters.backoffice.models.product.price.P
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.price.PriceCreationRequest;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.DoubleBuffer;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PriceService {
 
     private final PriceRepo priceRepo;

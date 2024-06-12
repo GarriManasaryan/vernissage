@@ -5,10 +5,12 @@ import com.handicraft.vernissage.domain.product.master.MasterRepo;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.master.MasterBackofficeModel;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.master.MasterCreationRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class MasterService {
 
     private final MasterRepo masterRepo;

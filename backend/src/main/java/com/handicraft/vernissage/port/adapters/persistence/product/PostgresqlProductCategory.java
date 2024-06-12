@@ -1,4 +1,4 @@
-package com.handicraft.vernissage.port.adapters.persistence;
+package com.handicraft.vernissage.port.adapters.persistence.product;
 
 import com.handicraft.vernissage.domain.product.category.ProductCategory;
 import com.handicraft.vernissage.domain.product.category.ProductCategoryRepo;

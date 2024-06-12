@@ -1,4 +1,4 @@
-package com.handicraft.vernissage.port.adapters.persistence;
+package com.handicraft.vernissage.port.adapters.persistence.product;
 
 import com.handicraft.vernissage.domain.product.price.Price;
 import com.handicraft.vernissage.domain.product.price.PriceRepo;
@@ -8,9 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.handicraft.vernissage.port.adapters.persistence.models.PriceSQLModel.*;

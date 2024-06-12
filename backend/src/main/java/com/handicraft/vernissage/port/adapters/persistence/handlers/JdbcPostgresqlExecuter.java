@@ -1,6 +1,5 @@
 package com.handicraft.vernissage.port.adapters.persistence.handlers;
 
-import com.handicraft.vernissage.port.adapters.persistence.models.MasterSQLModel;
 import org.postgresql.util.PSQLException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,13 +9,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.handicraft.vernissage.port.adapters.persistence.models.MasterSQLModel.*;
-import static com.handicraft.vernissage.port.adapters.persistence.models.MasterSQLModel.descriptionCol;
 
 @Component
 public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
@@ -95,7 +90,7 @@ public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
     }
 
     @Override
-    public void save(List<String> columns, HashMap<String, Object> modelMap) {
+    public void save(String table, List<String> columns, MapSqlParameterSource params) {
         var joinedCols = String.join(", ", columns.stream().map((x) -> STR."\{x}").toList());
         var joinedParamCols = String.join(", ", columns.stream().map((x) -> STR.":\{x}").toList());
 
@@ -105,11 +100,6 @@ public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
             values
             (\{joinedParamCols})
         """;
-        var params = new MapSqlParameterSource();
-
-        for (Map.Entry<String, Object> entry: modelMap.entrySet()){
-            params.addValue(entry.getKey(), entry.getValue());
-        }
 
         update(sqlTemplate, params);
     }

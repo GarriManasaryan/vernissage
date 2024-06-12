@@ -5,10 +5,12 @@ import com.handicraft.vernissage.domain.product.category.ProductCategoryRepo;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.ProductCategoryBackofficeModel;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.ProductCategoryCreationRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ProductCategoryService {
 
     private final ProductCategoryRepo productCategoryRepo;

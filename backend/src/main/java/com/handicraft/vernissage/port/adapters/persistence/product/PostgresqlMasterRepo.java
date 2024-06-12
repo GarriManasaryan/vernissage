@@ -1,7 +1,5 @@
-package com.handicraft.vernissage.port.adapters.persistence;
+package com.handicraft.vernissage.port.adapters.persistence.product;
 
-import com.handicraft.vernissage.domain.product.category.ProductCategory;
-import com.handicraft.vernissage.domain.product.category.ProductCategoryRepo;
 import com.handicraft.vernissage.domain.product.master.Master;
 import com.handicraft.vernissage.domain.product.master.MasterRepo;
 import com.handicraft.vernissage.port.adapters.persistence.handlers.JdbcPostgresExecuterRepo;
@@ -11,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static com.handicraft.vernissage.port.adapters.persistence.models.MasterSQLModel.*;
@@ -34,18 +31,17 @@ public class PostgresqlMasterRepo implements MasterRepo {
         );
     }
 
-    private static HashMap<String, Object> modelMap(Master master){
-        HashMap<String, Object> map = new HashMap<>();
-        map.put(idCol, master.id());
-        map.put(nameCol, master.name());
-        map.put(descriptionCol, master.description());
-        return map;
-
+    private MapSqlParameterSource params(Master master){
+        var params = new MapSqlParameterSource();
+        params.addValue(idCol, master.id());
+        params.addValue(nameCol, master.name());
+        params.addValue(descriptionCol, master.description());
+        return params;
     }
 
     @Override
     public void save(@NotNull Master master) {
-        jdbcPostgresExecuterRepo.save(MasterSQLModel.columns(), modelMap(master));
+        jdbcPostgresExecuterRepo.save(table, MasterSQLModel.columns(), params(master));
     }
 
     @Override
