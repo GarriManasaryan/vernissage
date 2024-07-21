@@ -1,9 +1,8 @@
 package com.handicraft.vernissage.port.adapters.backoffice.resource;
 
-import com.handicraft.vernissage.application.ProductCategoryService;
-import com.handicraft.vernissage.domain.product.category.ProductCategory;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.ProductCategoryBackofficeModel;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.ProductCategoryCreationRequest;
+import com.handicraft.vernissage.application.CategoryService;
+import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.CategoryBackofficeModel;
+import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.CategoryCreationRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,19 +11,19 @@ import java.util.List;
 @CrossOrigin("*")
 public class ProductCategoryController {
 
-    private final ProductCategoryService productCategoryService;
+    private final CategoryService categoryService;
 
-    public ProductCategoryController(ProductCategoryService productCategoryService) {
-        this.productCategoryService = productCategoryService;
+    public ProductCategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @PostMapping("/api/product-categories")
-    public void save(@RequestBody ProductCategoryCreationRequest productCategoryCreationRequest) {
-        productCategoryService.save(productCategoryCreationRequest);
+    public void save(@RequestBody CategoryCreationRequest categoryCreationRequest) {
+        categoryService.save(categoryCreationRequest);
     }
 
     @GetMapping("/api/product-categories")
-    public List<ProductCategoryBackofficeModel> all() {
-        return productCategoryService.all();
+    public List<CategoryBackofficeModel> all() {
+        return categoryService.all();
     }
 }

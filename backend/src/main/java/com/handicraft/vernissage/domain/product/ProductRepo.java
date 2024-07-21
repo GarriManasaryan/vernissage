@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductRepo {
 
-    void save(@NotNull Product product);
+    void save(Product product);
 
     List<Product> all();
 

@@ -1,18 +1,16 @@
 package com.handicraft.vernissage.application;
 
-import com.handicraft.vernissage.domain.product.Product;
 import com.handicraft.vernissage.domain.product.ProductRepo;
-import com.handicraft.vernissage.domain.product.master.Master;
-import com.handicraft.vernissage.domain.product.master.MasterRepo;
+import com.handicraft.vernissage.domain.product.category.Category;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.ProductBackofficeModel;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.ProductCreationRequest;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.master.MasterBackofficeModel;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.master.MasterCreationRequest;
+import com.handicraft.vernissage.port.adapters.backoffice.models.product.category.CategoryBackofficeModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
+
+import static com.handicraft.vernissage.application.common.FeatureEntityMapperService.switchMapFeaturesToBackofficeModels;
 
 @Service
 @Transactional
@@ -24,25 +22,29 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    public void save(ProductCreationRequest productCreationRequest) {
-        productRepo.save(Product.of(
-                productCreationRequest.name(),
-                productCreationRequest.description().orElse(null),
-                productCreationRequest.priceId(),
-                productCreationRequest.masterId(),
-                productCreationRequest.categoryId()
-        ));
+    private List<CategoryBackofficeModel> categoryBackofficeModels(List<Category> categories){
+        return categories.stream().filter(Objects::nonNull).map(
+                i -> new CategoryBackofficeModel(
+                        i.id(),
+                        i.name(),
+                        i.description(),
+                        i.parentId()
+                )
+        ).toList();
+
     }
 
     public List<ProductBackofficeModel> all() {
+        System.out.println(productRepo.all());
         return productRepo.all().stream()
                 .map(x -> new ProductBackofficeModel(
                         x.id(),
                         x.name(),
                         x.description(),
-                        x.priceId(),
-                        x.masterId(),
-                        x.categoryId()
+                        x.price(),
+                        x.master(),
+                        categoryBackofficeModels(x.categories()),
+                        switchMapFeaturesToBackofficeModels(x.features())
                 ))
                 .toList();
     }

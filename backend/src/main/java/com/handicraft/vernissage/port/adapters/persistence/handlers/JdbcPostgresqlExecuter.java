@@ -2,6 +2,8 @@ package com.handicraft.vernissage.port.adapters.persistence.handlers;
 
 import org.postgresql.util.PSQLException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -9,9 +11,12 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+
+import static com.handicraft.vernissage.port.adapters.persistence.models.FeatureBaseSQLModel.nameCol;
+import static com.handicraft.vernissage.port.adapters.persistence.models.FeatureBaseSQLModel.table;
 
 @Component
 public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
@@ -78,6 +83,11 @@ public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
     }
 
     @Override
+    public <T> List<T> customQuery(String sqlTemplate, MapSqlParameterSource params, RowMapper<T> rowMapper) {
+        return jdbcOperations.query(sqlTemplate, params, rowMapper);
+    }
+
+    @Override
     public <T> Optional<T> ofId(String tableName, String id, RowMapper<T> rowMapper) {
         var sqlTemplate = String.format("""
                 select * from %s 
@@ -87,6 +97,19 @@ public class JdbcPostgresqlExecuter implements JdbcPostgresExecuterRepo {
                 .addValue("id", id);
 
         return jdbcOperations.query(sqlTemplate, params, rowMapper).stream().findFirst();
+    }
+
+    @Override
+    public Boolean valueExists(String tableName, String colName, String value) {
+        var sqlTemplate = STR."""
+                select 1 from \{table} where \{colName} = :\{colName} limit 1
+                """;
+
+        ResultSetExtractor<Boolean> extractor = ResultSet::next;
+
+        var params = new MapSqlParameterSource().addValue(colName, value);
+
+        return jdbcOperations.query(sqlTemplate, params, extractor);
     }
 
     @Override

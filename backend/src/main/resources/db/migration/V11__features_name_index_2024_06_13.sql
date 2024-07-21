@@ -1,0 +1,1 @@
+create index vr_features_i_name on vr_features (name);
