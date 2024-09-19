@@ -3,12 +3,12 @@ import axios, { AxiosHeaders, AxiosRequestHeaders } from 'axios';
 // Next we make an 'instance' of it
 const axiosConf = axios.create({
 // .. where we make our configurations
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://localhost:8081'
 });
 
 const axiosAuth = axios.create({
     // .. where we make our configurations
-        baseURL: 'http://localhost:8080'
+        baseURL: 'http://localhost:8081'
     });
 
 axiosConf.defaults.headers.common = {

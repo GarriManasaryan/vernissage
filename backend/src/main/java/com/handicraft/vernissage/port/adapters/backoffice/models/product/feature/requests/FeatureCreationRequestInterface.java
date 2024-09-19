@@ -11,21 +11,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-//@JsonTypeInfo(
-//        use = JsonTypeInfo.Id.NAME,
-//        include = JsonTypeInfo.As.PROPERTY,
-//        property = "discriminator"
-//)
-//@JsonSubTypes({
-//        @JsonSubTypes.Type(value = FeatureTextCreationRequest.class),
-//        @JsonSubTypes.Type(value = FeatureNumericCreationRequest.class)
-//})
+
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "discriminator")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = FeatureTextCreationRequest.class, name = "FEATURE_TEXT"),
         @JsonSubTypes.Type(value = FeatureNumericCreationRequest.class, name = "FEATURE_NUMERIC")
 })
-public sealed interface FeatureCreationRequestInterface permits FeatureTextCreationRequest, FeatureNumericCreationRequest {
+public sealed interface FeatureCreationRequestInterface permits FeatureNumericCreationRequest, FeatureTextCreationRequest{
     @NotNull String name();
     @Nullable String description();
     @Nullable String parentId();

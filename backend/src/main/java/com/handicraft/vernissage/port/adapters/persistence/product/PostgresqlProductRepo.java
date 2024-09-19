@@ -15,6 +15,7 @@ import com.handicraft.vernissage.port.adapters.persistence.handlers.JdbcPostgres
 import com.handicraft.vernissage.port.adapters.persistence.handlers.JsonOperations;
 import com.handicraft.vernissage.port.adapters.persistence.models.*;
 import com.handicraft.vernissage.port.adapters.persistence.models.dto.ProductFeatureDTO;
+import net.minidev.json.JSONUtil;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -89,16 +90,71 @@ public class PostgresqlProductRepo implements ProductRepo {
 
     }
 
-    @Override
-    public void save(Product product) {
-        jdbcPostgresExecuterRepo.save(ProductSQLModel.table, ProductSQLModel.columns(), params(product));
+
+    private void addCategoriesToProduct(Product product) {
+        if (product.categories().size() > 1){
+            var sqlTemplateBase = STR."""
+                    insert into \{ProductCategoriesSQLModel.table}
+                    (\{ProductCategoriesSQLModel.productIdCol}, \{ProductCategoriesSQLModel.categoryIdCol})
+                    values
+                    """;
+
+            List<String> values = new ArrayList<>();
+            product.categories().forEach(
+                    category -> values.add(STR."('\{product.id()}', '\{category.id()}')")
+            );
+
+            sqlTemplateBase = STR."\{sqlTemplateBase} \{String.join(", ", values)}";
+
+            jdbcPostgresExecuterRepo.update(sqlTemplateBase, new MapSqlParameterSource());
+        }
     }
 
-    private MapSqlParameterSource params(Product product) {
+    private void addFeaturesToProduct(Product product) {
+
+        if (product.features().size() > 1){
+            var sqlTemplateBase = STR."""
+                    insert into \{ProductFeatureSQLModel.table}
+                    (\{ProductFeatureSQLModel.productIdCol}, \{ProductFeatureSQLModel.featureIdCol})
+                    values
+                    """;
+
+            List<String> values = new ArrayList<>();
+            product.features().forEach(
+                    feature -> values.add(STR."('\{product.id()}', '\{feature.id()}')")
+            );
+
+            sqlTemplateBase = STR."\{sqlTemplateBase} \{String.join(", ", values)}";
+
+            System.out.println(sqlTemplateBase);
+
+            jdbcPostgresExecuterRepo.update(sqlTemplateBase, new MapSqlParameterSource());
+        }
+
+    }
+
+    @Override
+    public void save(Product product) {
+        System.out.println(productParams(product));
+        // save product
+        var sqlTemplate = STR."""
+                insert into \{ProductSQLModel.table}
+                (\{ProductSQLModel.idCol}, \{ProductSQLModel.nameCol}, \{ProductSQLModel.descriptionCol}, \{ProductSQLModel.masterIdCol}, \{ProductSQLModel.priceCol})
+                values
+                (:\{ProductSQLModel.idCol}, :\{ProductSQLModel.nameCol}, :\{ProductSQLModel.descriptionCol}, :\{ProductSQLModel.masterIdCol}, :\{ProductSQLModel.priceCol}::jsonb)
+                """;
+        jdbcPostgresExecuterRepo.update(sqlTemplate, productParams(product));
+        // connect categories
+        addCategoriesToProduct(product);
+        // connect features
+        addFeaturesToProduct(product);
+    }
+
+    private MapSqlParameterSource productParams(Product product) {
         var params = new MapSqlParameterSource();
         params.addValue(ProductSQLModel.idCol, product.id());
         params.addValue(ProductSQLModel.nameCol, product.name());
-        params.addValue(ProductSQLModel.descriptionCol, product.description());
+        params.addValue(ProductSQLModel.descriptionCol, product.description().orElse(null));
         params.addValue(ProductSQLModel.masterIdCol, product.master().id());
         params.addValue(ProductSQLModel.priceCol, jsonOperations.serializeFromObjToStringJson(product.price()));
         return params;

@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: gateway
+
+#  если убрать сам стартер и оставить толоько gateway, это не нужно
+#  main:
+#    web-application-type: reactive
+
+server:
+  spring:
+    cloud:
+      gateway:
+        metrics:
+          enabled: true
+          tags:
+            path:
+              enabled: true
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,metrics
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: prometheus, metrics  # или '*' ?
+#  metrics:
+#    export:
+#      prometheus:
+#        enabled: true
+
+management:
+  metrics:
+    enable:
+      all: true
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, metrics
+
+scrape_configs:
+  - job_name: 'spring-cloud-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8083']
+
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: backend1_api_route
+##          uri: http://localhost:8082  # для локального запуска, но тогда и порт внизу указать 8083
+#          uri: http://backend1:8080  # докер
+#          predicates:
+##            - Path=/api/*
+#            - Header=X-Request-Id, \d+
+#          filters:
+#            - AddRequestHeader=X-Api-Gateway, PassedThroughGateway
+
+#server:
+#  port: 8083

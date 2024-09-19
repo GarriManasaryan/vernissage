@@ -4,6 +4,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../navbar/vern_logo_fin(4).png'
 import './styles.css'
+import axiosConf from '../../axiosConf';
 
 function NavBar() {
 
@@ -12,6 +13,15 @@ function NavBar() {
     const onChange: CheckboxProps['onChange'] = (e) => {
         console.log(`checked = ${e.target.checked}`);
     };
+
+
+    const testApi = () => {
+        axiosConf.get(`/api/products`)
+        .then((response)=>
+            console.log(response.data)
+        )
+    }
+
 
 
     return (
@@ -25,10 +35,12 @@ function NavBar() {
                 >
                     <img className="logo" src={logo} alt="logo" />
                 </Link>
-                {/* <button className="bn632-hover bn19">Catalog</button> */}
-                <button className="btn-catalog">Catalog</button>
-                {/* <button className="btn-catalogv2">Catalog</button> */}
-                {/* <img className="loho-catalog" src={catalog}></img> */}
+                {/* <button className="btn-catalog">Catalog</button> */}
+                <button 
+                    // type="primary"
+                    className="btn-catalog"
+                    onClick={() => testApi()}
+                >Catalog</button>
                 <Search
                     style={{
                         width: '550px',

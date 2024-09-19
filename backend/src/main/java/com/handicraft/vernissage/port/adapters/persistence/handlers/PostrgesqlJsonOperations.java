@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 @Component
 public class PostrgesqlJsonOperations implements JsonOperations {
@@ -18,6 +19,7 @@ public class PostrgesqlJsonOperations implements JsonOperations {
 
     public PostrgesqlJsonOperations() {
         this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new Jdk8Module());
     }
 
     @Nullable

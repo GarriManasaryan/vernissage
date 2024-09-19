@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: servlet-api-gw
+
+  datasource:
+    backend:
+      uri: http://backend1:8080
+
+#server:
+#  port: 8083

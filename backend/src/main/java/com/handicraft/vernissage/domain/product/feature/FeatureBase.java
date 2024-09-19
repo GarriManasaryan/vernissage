@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public sealed interface FeatureBase permits FeatureNumeric, FeatureText {
+public sealed interface FeatureBase permits FeatureText, FeatureNumeric{
+    // + categorical
     @NotNull String id();
     @NotNull String name();
     @NotNull Optional<String> description();

@@ -2,6 +2,7 @@ package com.handicraft.vernissage.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.handicraft.vernissage.application.IdGenerator;
+import com.handicraft.vernissage.domain.NamedEntity;
 import com.handicraft.vernissage.domain.product.category.Category;
 import com.handicraft.vernissage.domain.product.feature.FeatureBase;
 import com.handicraft.vernissage.domain.product.price.Price;
@@ -26,7 +27,7 @@ public record Product(
         // аналогично
         @NotNull List<? extends FeatureBase> features
 
-        ) {
+    ) implements NamedEntity {
 
     public static Product of(
             @NotNull String name,

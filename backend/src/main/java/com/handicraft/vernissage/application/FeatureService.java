@@ -1,7 +1,8 @@
 package com.handicraft.vernissage.application;
 
-import com.handicraft.vernissage.application.common.DBValueChecker;
+import com.handicraft.vernissage.application.common.RepoValueChecker;
 import com.handicraft.vernissage.application.common.FeatureEntityMapperService;
+import com.handicraft.vernissage.domain.product.feature.FeatureBase;
 import com.handicraft.vernissage.domain.product.feature.FeatureNumeric;
 import com.handicraft.vernissage.domain.product.feature.FeatureRepo;
 import com.handicraft.vernissage.domain.product.feature.FeatureText;
@@ -34,41 +35,50 @@ public class FeatureService {
         return switchMapFeaturesToBackofficeModels(featureRepo.all());
     }
 
-    public void saveFeatureText(FeatureTextCreationRequest featureTextCreationRequest) {
-        DBValueChecker.checkValueInTable(featureTextCreationRequest.name(), featureRepo);
-        var featureText = FeatureText.of(
-                featureTextCreationRequest.name(),
-                featureTextCreationRequest.description(),
-                featureTextCreationRequest.parentId(),
-                categoryCreationRequestModels(featureTextCreationRequest.categories()),
-                featureTextCreationRequest.value()
-        );
-        featureRepo.saveFeatureBase(featureText);
-        featureRepo.saveFeatureText(featureText);
-        if (!featureText.categories().isEmpty()){
-            featureRepo.addCategoriesToFeature(featureText);
-        }
+    private static FeatureBase mapToFeatureEntity(FeatureCreationRequestInterface featureCreationRequest){
+        return switch (featureCreationRequest){
+            case FeatureTextCreationRequest featureTextCreationRequest -> FeatureText.of(
+                    featureTextCreationRequest.name(),
+                    featureTextCreationRequest.description(),
+                    featureTextCreationRequest.parentId(),
+                    categoryCreationRequestModels(featureTextCreationRequest.categories()),
+                    featureTextCreationRequest.value()
+            );
+            case FeatureNumericCreationRequest featureNumericCreationRequest -> FeatureNumeric.of(
+                    featureNumericCreationRequest.name(),
+                    featureNumericCreationRequest.description(),
+                    featureNumericCreationRequest.parentId(),
+                    categoryCreationRequestModels(
+                            featureNumericCreationRequest.categories()
+                    ),
+                    featureNumericCreationRequest.from(),
+                    featureNumericCreationRequest.to(),
+                    featureNumericCreationRequest.unit(),
+                    featureNumericCreationRequest.lessThanText(),
+                    featureNumericCreationRequest.moreThanText()
+            );
+        };
+
     }
 
-    public void saveFeatureNumeric(FeatureNumericCreationRequest featureNumericCreationRequest) {
-        DBValueChecker.checkValueInTable(featureNumericCreationRequest.name(), featureRepo);
-        var featureNumeric = FeatureNumeric.of(
-                featureNumericCreationRequest.name(),
-                featureNumericCreationRequest.description(),
-                featureNumericCreationRequest.parentId(),
-                categoryCreationRequestModels(
-                        featureNumericCreationRequest.categories()
-                ),
-                featureNumericCreationRequest.from(),
-                featureNumericCreationRequest.to(),
-                featureNumericCreationRequest.unit(),
-                featureNumericCreationRequest.lessThanText(),
-                featureNumericCreationRequest.moreThanText()
-        );
-        featureRepo.saveFeatureBase(featureNumeric);
-        featureRepo.saveFeatureNumeric(featureNumeric);
-        if (!featureNumeric.categories().isEmpty()){
-            featureRepo.addCategoriesToFeature(featureNumeric);
+    public void saveFeature(FeatureCreationRequestInterface featureCreationRequest){
+        var featureEntity = mapToFeatureEntity(featureCreationRequest);
+        saveGenericFeature(featureEntity);
+
+    }
+
+    private <T extends FeatureBase> void saveGenericFeature(T featureEntity){
+        // в аргументы Function<T, R> featureCreatorFunc, а внизу ее просто вызвать
+        // R featureEntity = featureCreatorFunc.apply(t);
+        // если надо будет в других примерах
+        RepoValueChecker.checkValueInTable(featureEntity.name(), featureRepo);
+        featureRepo.saveFeatureBase(featureEntity);
+        switch (featureEntity){
+            case FeatureNumeric featureNumeric -> featureRepo.saveFeatureNumeric(featureNumeric);
+            case FeatureText featureText -> featureRepo.saveFeatureText(featureText);
+        }
+        if (!featureEntity.categories().isEmpty()){
+            featureRepo.addCategoriesToFeature(featureEntity);
         }
     }
 

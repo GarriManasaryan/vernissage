@@ -9,13 +9,11 @@ import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.backoffice.FeatureNumericBackofficeModel;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.backoffice.FeatureTextBackofficeModel;
 import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.requests.CategoryFeatureCreationModel;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.requests.FeatureCreationRequestInterface;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.requests.FeatureNumericCreationRequest;
-import com.handicraft.vernissage.port.adapters.backoffice.models.product.feature.requests.FeatureTextCreationRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 @Service
 public class FeatureEntityMapperService {
@@ -72,6 +70,28 @@ public class FeatureEntityMapperService {
 
     }
 
+    public static Function<Category, CategoryBackofficeModel> toBackofficeModel = category ->
+            new CategoryBackofficeModel(
+                    category.id(),
+                    category.name(),
+                    category.description(),
+                    category.parentId()
+            );
+
+    public static Function<CategoryBackofficeModel, Category> toCategory = model ->
+            new Category(
+                    model.id(),
+                    model.name(),
+                    model.description(),
+                    model.parentId()
+            );
+
+    public static <S, T> List<T> mapCategoriesList(List<S> source, Function<S, T> mapperFunction) {
+        return source.stream()
+                .filter(Objects::nonNull)
+                .map(mapperFunction)
+                .toList();
+    }
 
 
 }

@@ -17,10 +17,10 @@ public class ProductController {
         this.productService = productService;
     }
 
-//    @PostMapping("/api/products")
-//    public void save(@RequestBody ProductCreationRequest productCreationRequest) {
-//        productService.save(productCreationRequest);
-//    }
+    @PostMapping("/api/products")
+    public void save(@RequestBody ProductCreationRequest productCreationRequest) {
+        productService.save(productCreationRequest);
+    }
 
     @GetMapping("/api/products")
     public List<ProductBackofficeModel> all() {

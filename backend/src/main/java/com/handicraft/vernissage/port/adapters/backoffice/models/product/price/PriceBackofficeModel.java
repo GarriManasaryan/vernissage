@@ -8,7 +8,6 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public record PriceBackofficeModel(
-        @NotNull String id,
         @NotNull Double value,
         @NotNull String currency,
         @Nullable Double discount

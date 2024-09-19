@@ -8,6 +8,6 @@ public record CategoryBackofficeModel(
         @NotNull String name,
         @Nullable String description,
         @Nullable String parentId
-) {
+){
 
 }
